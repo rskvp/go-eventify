@@ -2,36 +2,37 @@ package event
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
-
-	ps "assalielmehdi/eventify/pubsub"
 )
 
 type Event struct {
-	id      string
-	ps      *ps.PubSub
-	trigger *Trigger
-	action  *Action
+	Id     string
+	Action *Action
+	Next   []*Event
 }
 
-func NewEvent(ps *ps.PubSub, t *Trigger, a *Action) *Event {
-	return &Event{uuid.New().String(), ps, t, a}
+func NewEvent() *Event {
+	return &Event{
+		Id:     uuid.NewString(),
+		Action: DefaultAction,
+		Next:   make([]*Event, 0),
+	}
 }
 
-// Subscribes the event to its trigger
-func (e *Event) Start() {
-	e.ps.Sub(e.trigger.id, func(d string) {
-		d = e.action.cb(d)
+func (e *Event) Run(d string) {
+	log.Printf("Running event=%s with input=%s\n", e.Id, d)
 
-		e.ps.Pub(e.endId(), d)
-	})
+	d = e.Action.Run(d)
+
+	log.Printf("Excution of event=%s finished with output=%s\n", e.Id, d)
+
+	for _, next := range e.Next {
+		next.Run(d)
+	}
 }
 
-func (e *Event) startId() string {
-	return fmt.Sprintf("START_%s", e.id)
-}
-
-func (e *Event) endId() string {
-	return fmt.Sprintf("END_%s", e.id)
+func (e *Event) StartId() string {
+	return fmt.Sprintf("START_%s", e.Id)
 }
