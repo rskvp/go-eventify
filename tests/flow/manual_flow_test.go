@@ -18,9 +18,9 @@ func TestManualFlowRegis(t *testing.T) {
 		ok = true
 		return d
 	})
-	var f flow.Flow = flow.NewManualFlow(e)
+	f := flow.NewManualFlow(e)
 
-	f.Run()
+	f.Run("")
 
 	assert.True(ok)
 }

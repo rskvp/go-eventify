@@ -1,13 +1,17 @@
 package flow
 
-import "assalielmehdi/eventify/event"
+import (
+	"assalielmehdi/eventify/event"
+	"log"
+)
 
-type FlowCommon struct {
+type Flow struct {
 	Id      string
 	Starter *event.Event
 }
 
-type Flow interface {
-	Register()
-	Run()
+func (f *Flow) Run(d string) {
+	log.Printf("Running flow=%s\n", f.Id)
+
+	f.Starter.Run(d)
 }
