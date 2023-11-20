@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"assalielmehdi/eventify/app/models"
 	"assalielmehdi/eventify/app/services"
 )
 
@@ -21,7 +23,7 @@ func NewFlowHandler(flowService *services.FlowService) *FlowHandler {
 func (handler *FlowHandler) HandleGetAll(ctx *gin.Context) {
 	records := handler.FlowService.GetAll()
 
-	ctx.JSON(http.StatusOK, records)
+	ctx.JSON(http.StatusOK, NewHandlerResponse(http.StatusOK, records))
 }
 
 func (handler *FlowHandler) HandleGetOneById(ctx *gin.Context) {
@@ -29,7 +31,17 @@ func (handler *FlowHandler) HandleGetOneById(ctx *gin.Context) {
 }
 
 func (handler *FlowHandler) HandleAddOne(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "HandleAddOne")
+	var payload models.Flow
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		log.Print(err)
+		ctx.JSON(http.StatusBadRequest, NewHandlerResponse(http.StatusBadRequest, "Failed to bind JSON data"))
+		return
+	}
+
+	record := handler.FlowService.AddOne(&payload)
+
+	ctx.JSON(http.StatusCreated, NewHandlerResponse(http.StatusCreated, record))
 }
 
 func (handler *FlowHandler) HandleUpdateOneById(ctx *gin.Context) {

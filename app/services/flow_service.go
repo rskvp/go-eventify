@@ -18,3 +18,7 @@ func NewFlowService(flowRepository *repositories.FlowRepository) *FlowService {
 func (sercice *FlowService) GetAll() []*models.Flow {
 	return sercice.FlowRepository.GetAll()
 }
+
+func (service *FlowService) AddOne(payload *models.Flow) *models.Flow {
+	return service.FlowRepository.AddOne(payload)
+}

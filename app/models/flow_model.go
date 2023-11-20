@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const (
@@ -12,20 +10,12 @@ const (
 )
 
 type Flow struct {
-	ID          string
-	Name        string
-	Description string
-	Type        int
-	Cron        string
-	Events      []Event
-	CreatedAt   time.Time
-	LastExecAt  time.Time
-}
-
-func NewFlow() *Flow {
-	return &Flow{
-		ID:        uuid.NewString(),
-		CreatedAt: time.Now(),
-		Type:      FlowTypeDefault,
-	}
+	ID          string    `json:"id" `
+	Name        string    `json:"name" binding:"required"`
+	Description string    `json:"description" binding:"required"`
+	Type        int       `json:"type" binding:"required"`
+	Cron        string    `json:"cron"`
+	Events      []*Event  `json:"events"`
+	CreatedAt   time.Time `json:"createdAt"`
+	LastExecAt  time.Time `json:"lastExecAt"`
 }
