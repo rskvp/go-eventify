@@ -1,10 +1,11 @@
 package repositories
 
 import (
-	"assalielmehdi/eventify/app/models"
 	"time"
 
 	"github.com/google/uuid"
+
+	"assalielmehdi/eventify/app/models"
 )
 
 type FlowRepository struct {
