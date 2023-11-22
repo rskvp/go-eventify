@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,6 +27,18 @@ func (repo *FlowRepository) GetAll() []*models.Flow {
 	return records
 }
 
+func (repo *FlowRepository) GetOneById(id string) (*models.Flow, error) {
+	var record *models.Flow
+
+	repo.DB.First(&record, "id = ?", id)
+
+	if record == nil {
+		return nil, errors.New("not found")
+	}
+
+	return record, nil
+}
+
 func (repo *FlowRepository) AddOne(record *models.Flow) *models.Flow {
 	record.ID = uuid.NewString()
 	record.Events = make([]*models.Event, 0)
@@ -34,4 +47,26 @@ func (repo *FlowRepository) AddOne(record *models.Flow) *models.Flow {
 	repo.DB.Create(record)
 
 	return record
+}
+
+func (repo *FlowRepository) UpdateOneById(record *models.Flow) (*models.Flow, error) {
+	record, err := repo.GetOneById(record.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	repo.DB.Save(&record)
+
+	return record, nil
+}
+
+func (repo *FlowRepository) DeleteOneById(id string) (*models.Flow, error) {
+	record, err := repo.GetOneById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	repo.DB.Delete(&record)
+
+	return record, nil
 }

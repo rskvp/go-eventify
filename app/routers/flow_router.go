@@ -25,7 +25,7 @@ func (router *FlowRouter) Register(server *Server) {
 
 	group.POST("/", router.Handler.HandleAddOne)
 
-	group.PUT("/:id", router.Handler.HandleUpdateOneById)
+	group.PUT("/", router.Handler.HandleUpdateOneById)
 
 	group.DELETE("/:id", router.Handler.HandleDeleteOneById)
 

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,15 +26,20 @@ func (handler *FlowHandler) HandleGetAll(ctx *gin.Context) {
 }
 
 func (handler *FlowHandler) HandleGetOneById(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "HandleGetOneById")
+	record, err := handler.FlowService.GetOneById(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, NewHandlerResponse(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, NewHandlerResponse(http.StatusOK, record))
 }
 
 func (handler *FlowHandler) HandleAddOne(ctx *gin.Context) {
 	var payload models.Flow
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		log.Print(err)
-		ctx.JSON(http.StatusBadRequest, NewHandlerResponse(http.StatusBadRequest, "Failed to bind JSON data"))
+		ctx.JSON(http.StatusBadRequest, NewHandlerResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -45,11 +49,30 @@ func (handler *FlowHandler) HandleAddOne(ctx *gin.Context) {
 }
 
 func (handler *FlowHandler) HandleUpdateOneById(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "HandleUpdateOneById")
+	var payload models.Flow
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewHandlerResponse(http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	record, err := handler.FlowService.UpdateOneById(&payload)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, NewHandlerResponse(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, NewHandlerResponse(http.StatusOK, record))
 }
 
 func (handler *FlowHandler) HandleDeleteOneById(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "HandleDeleteOneById")
+	record, err := handler.FlowService.DeleteOneById(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, NewHandlerResponse(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, NewHandlerResponse(http.StatusOK, record))
 }
 
 func (handler *FlowHandler) HandleRunById(ctx *gin.Context) {

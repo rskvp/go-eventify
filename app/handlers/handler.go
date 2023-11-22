@@ -8,8 +8,16 @@ type HandlerResponse struct {
 
 func NewHandlerResponse(status int, payload any) *HandlerResponse {
 	return &HandlerResponse{
-		Type:    "OK",
+		Type:    getResponseType(status),
 		Status:  status,
 		Payload: payload,
 	}
+}
+
+func getResponseType(status int) string {
+	if status >= 200 && status < 300 {
+		return "OK"
+	}
+
+	return "NOK"
 }
