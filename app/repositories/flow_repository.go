@@ -22,7 +22,7 @@ func NewFlowRepository(db *DB) *FlowRepository {
 func (repo *FlowRepository) GetAll() []*models.Flow {
 	var records []*models.Flow
 
-	repo.DB.Find(&records)
+	repo.DB.Preload("Events").Find(&records)
 
 	return records
 }
@@ -30,9 +30,7 @@ func (repo *FlowRepository) GetAll() []*models.Flow {
 func (repo *FlowRepository) GetOneById(id string) (*models.Flow, error) {
 	var record *models.Flow
 
-	repo.DB.First(&record, "id = ?", id)
-
-	if record == nil {
+	if err := repo.DB.Preload("Events").First(&record, "id = ?", id).Error; err != nil {
 		return nil, errors.New("not found")
 	}
 
@@ -50,12 +48,12 @@ func (repo *FlowRepository) AddOne(record *models.Flow) *models.Flow {
 }
 
 func (repo *FlowRepository) UpdateOneById(record *models.Flow) (*models.Flow, error) {
-	record, err := repo.GetOneById(record.ID)
+	_, err := repo.GetOneById(record.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	repo.DB.Save(&record)
+	repo.DB.Save(record)
 
 	return record, nil
 }

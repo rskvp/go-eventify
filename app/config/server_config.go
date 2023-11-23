@@ -24,5 +24,6 @@ func initServerConfig() {
 	serverConfig.CORS = cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{"*"},
+		AllowMethods: []string{"*"},
 	}
 }

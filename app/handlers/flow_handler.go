@@ -10,12 +10,12 @@ import (
 )
 
 type FlowHandler struct {
-	FlowService services.FlowService
+	FlowService *services.FlowService
 }
 
 func NewFlowHandler(flowService *services.FlowService) *FlowHandler {
 	return &FlowHandler{
-		FlowService: *flowService,
+		FlowService: flowService,
 	}
 }
 
