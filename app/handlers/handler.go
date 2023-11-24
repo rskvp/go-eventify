@@ -1,23 +1,25 @@
 package handlers
 
-type HandlerResponse struct {
+type HandlerSuccess struct {
 	Type    string `json:"type"`
-	Status  int    `json:"status"`
 	Payload any    `json:"payload"`
 }
 
-func NewHandlerResponse(status int, payload any) *HandlerResponse {
-	return &HandlerResponse{
-		Type:    getResponseType(status),
-		Status:  status,
+type HandlerError struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
+
+func NewHandlerSuccess(payload any) *HandlerSuccess {
+	return &HandlerSuccess{
+		Type:    "OK",
 		Payload: payload,
 	}
 }
 
-func getResponseType(status int) string {
-	if status >= 200 && status < 300 {
-		return "OK"
+func NewHandlerError(err error) *HandlerError {
+	return &HandlerError{
+		Type:    "NOK",
+		Message: err.Error(),
 	}
-
-	return "NOK"
 }

@@ -22,11 +22,11 @@ func (handler *EventHandler) HandleAddOne(ctx *gin.Context) {
 	var payload models.Event
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, NewHandlerResponse(http.StatusBadRequest, err.Error()))
+		ctx.JSON(http.StatusBadRequest, NewHandlerError(err))
 		return
 	}
 
 	record := handler.EventService.AddOne(&payload)
 
-	ctx.JSON(http.StatusCreated, NewHandlerResponse(http.StatusCreated, record))
+	ctx.JSON(http.StatusCreated, NewHandlerSuccess(record))
 }
