@@ -3,6 +3,7 @@ package graph
 const (
 	NodeTypeInput      = "input"
 	NodeTypeOutput     = "output"
+	NodeTypeDefault    = "default"
 	NodeTargetPosition = "left"
 	NodeSourcePosition = "right"
 	EdgeMarkerEndType  = "arrowclosed"

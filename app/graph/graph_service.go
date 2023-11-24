@@ -98,5 +98,5 @@ func extractNodeType(event *models.Event) string {
 		return NodeTypeOutput
 	}
 
-	return ""
+	return NodeTypeDefault
 }

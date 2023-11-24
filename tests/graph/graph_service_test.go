@@ -71,7 +71,7 @@ func TestGetFlowGraph(t *testing.T) {
 	assert.Equal(flowGraph.Nodes[1].Data, graph.FlowGraphNodeData{Label: events[1].Name})
 	assert.Equal(flowGraph.Nodes[1].TargetPosition, graph.NodeTargetPosition)
 	assert.Equal(flowGraph.Nodes[1].SourcePosition, graph.NodeSourcePosition)
-	assert.Equal(flowGraph.Nodes[1].Type, "")
+	assert.Equal(flowGraph.Nodes[1].Type, graph.NodeTypeDefault)
 
 	assert.Equal(flowGraph.Nodes[2].Id, events[2].ID)
 	assert.Equal(flowGraph.Nodes[2].Position, graph.FlowGraphNodePosition{X: 100, Y: 100})
