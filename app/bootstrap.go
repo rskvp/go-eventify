@@ -3,6 +3,7 @@ package app
 import (
 	"assalielmehdi/eventify/app/config"
 	"assalielmehdi/eventify/app/explorer"
+	"assalielmehdi/eventify/app/graph"
 	"assalielmehdi/eventify/app/handlers"
 	"assalielmehdi/eventify/app/repositories"
 
@@ -35,12 +36,17 @@ func Bootstrap() {
 	explorerHandler := explorer.NewExplorerHandler(explorerService)
 	exploterRouter := explorer.NewExplorerRouter(explorerHandler)
 
+	graphService := graph.NewGraphService(db)
+	graphHandler := graph.NewGraphHandler(graphService)
+	graphRouter := graph.NewGraphRouter(graphHandler)
+
 	// 2-Deps
 
 	// Run
 	flowRouter.Register(server)
 	eventRouter.Register(server)
 	exploterRouter.Register(server)
+	graphRouter.Register(server)
 
 	server.Serve()
 }

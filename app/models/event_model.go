@@ -15,6 +15,9 @@ type Event struct {
 	PrevEventID string    `json:"prevEventId"`
 	FlowID      string    `json:"flowId" binding:"required"`
 	CreatedAt   time.Time `json:"createdAt"`
+	Position    string
+	IsInput     bool
+	IsOutput    bool
 }
 
 func NewEvent() *Event {
