@@ -19,5 +19,5 @@ func (router *GraphRouter) Register(server *routers.Server) {
 
 	group.GET("/flows/:flowId", router.handler.HandleGetFlowGraph)
 
-	group.PATCH("/events/:eventId/position", router.handler.HandleUpdateEventPosition)
+	group.PATCH("/events/position", router.handler.HandleUpdateEventPosition)
 }

@@ -28,18 +28,17 @@ func (handler *GraphHandler) HandleGetFlowGraph(ctx *gin.Context) {
 }
 
 func (handler *GraphHandler) HandleUpdateEventPosition(ctx *gin.Context) {
-	eventId := ctx.Param("eventId")
-	var payload FlowGraphNodePosition
+	var payload []*FlowGraphNodePositionUpdate
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, handlers.NewHandlerError(err))
 		return
 	}
 
-	position, err := handler.graphService.UpdateEventPosition(eventId, &payload)
+	err := handler.graphService.UpdateEventsPositions(payload)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, handlers.NewHandlerError(err))
 	}
 
-	ctx.JSON(http.StatusOK, handlers.NewHandlerSuccess(position))
+	ctx.JSON(http.StatusOK, handlers.NewHandlerSuccess("Batch update with success."))
 }

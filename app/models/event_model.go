@@ -15,7 +15,8 @@ type Event struct {
 	PrevEventID string    `json:"prevEventId"`
 	FlowID      string    `json:"flowId" binding:"required"`
 	CreatedAt   time.Time `json:"createdAt"`
-	Position    string
+	PositionX   float64
+	PositionY   float64
 	IsInput     bool
 	IsOutput    bool
 }

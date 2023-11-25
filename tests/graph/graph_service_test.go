@@ -26,19 +26,21 @@ func TestGetFlowGraph(t *testing.T) {
 	eventIds := []string{uuid.NewString(), uuid.NewString(), uuid.NewString()}
 	events := []*models.Event{
 		{
-			ID:       eventIds[0],
-			Name:     "event-1",
-			IsInput:  true,
-			IsOutput: false,
-			Position: "0|0",
-			FlowID:   flowId,
+			ID:        eventIds[0],
+			Name:      "event-1",
+			IsInput:   true,
+			IsOutput:  false,
+			PositionX: 0,
+			PositionY: 0,
+			FlowID:    flowId,
 		},
 		{
 			ID:          eventIds[1],
 			Name:        "event-2",
 			IsInput:     false,
 			IsOutput:    false,
-			Position:    "50|50",
+			PositionX:   50,
+			PositionY:   50,
 			PrevEventID: eventIds[0],
 			FlowID:      flowId,
 		},
@@ -47,7 +49,8 @@ func TestGetFlowGraph(t *testing.T) {
 			Name:        "event-3",
 			IsInput:     false,
 			IsOutput:    true,
-			Position:    "100|100",
+			PositionX:   100,
+			PositionY:   100,
 			PrevEventID: eventIds[1],
 			FlowID:      flowId,
 		},
@@ -98,20 +101,26 @@ func TestUpdateEventPosition(t *testing.T) {
 	db, service := prepare()
 
 	event := models.Event{
-		ID:       uuid.NewString(),
-		Position: "0|0",
+		ID:        uuid.NewString(),
+		PositionX: 0,
+		PositionY: 0,
 	}
-	payload := &graph.FlowGraphNodePosition{
-		X: 10,
-		Y: 10,
+	payload := []*graph.FlowGraphNodePositionUpdate{
+		{
+			EventId: event.ID,
+			NewPosition: &graph.FlowGraphNodePosition{
+				X: 10.5,
+				Y: 20.5,
+			},
+		},
 	}
 
 	db.Create(&event)
 
-	newPosition, _ := service.UpdateEventPosition(event.ID, payload)
+	service.UpdateEventsPositions(payload)
 
 	db.Where("id = ?", event.ID).First(&event)
 
-	assert.Equal(payload, newPosition)
-	assert.Equal(event.Position, fmt.Sprintf("%d|%d", payload.X, payload.Y))
+	assert.Equal(event.PositionX, payload[0].NewPosition.X)
+	assert.Equal(event.PositionY, payload[0].NewPosition.Y)
 }

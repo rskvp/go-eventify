@@ -24,8 +24,8 @@ type FlowGraphNode struct {
 }
 
 type FlowGraphNodePosition struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
 type FlowGraphNodeData struct {
@@ -41,4 +41,9 @@ type FlowGraphEdges struct {
 
 type FlowGraphEdgeMarker struct {
 	Type string `json:"type"`
+}
+
+type FlowGraphNodePositionUpdate struct {
+	EventId     string                 `json:"eventId"`
+	NewPosition *FlowGraphNodePosition `json:"newPosition"`
 }

@@ -4,8 +4,8 @@ import (
 	"assalielmehdi/eventify/app/models"
 	"assalielmehdi/eventify/app/repositories"
 	"fmt"
-	"strconv"
-	"strings"
+
+	"gorm.io/gorm"
 )
 
 type GraphService struct {
@@ -34,7 +34,7 @@ func (service *GraphService) GetFlowGraph(flowId string) (*FlowGraph, error) {
 	for _, event := range events {
 		graph.Nodes = append(graph.Nodes, &FlowGraphNode{
 			Id:             event.ID,
-			Position:       extractNodePosition(event),
+			Position:       FlowGraphNodePosition{X: event.PositionX, Y: event.PositionY},
 			Data:           FlowGraphNodeData{event.Name},
 			TargetPosition: NodeTargetPosition,
 			SourcePosition: NodeSourcePosition,
@@ -54,41 +54,6 @@ func (service *GraphService) GetFlowGraph(flowId string) (*FlowGraph, error) {
 	return graph, nil
 }
 
-func (service *GraphService) UpdateEventPosition(eventId string, payload *FlowGraphNodePosition) (*FlowGraphNodePosition, error) {
-	query := `
-		UPDATE events
-		SET position = ?
-		WHERE id = ?;
-	`
-	newPosition := fmt.Sprintf("%d|%d", payload.X, payload.Y)
-
-	err := service.db.Exec(query, newPosition, eventId).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return payload, nil
-}
-
-func extractNodePosition(event *models.Event) FlowGraphNodePosition {
-	tokens := strings.Split(event.Position, "|")
-
-	if len(tokens) != 2 {
-		return FlowGraphNodePosition{
-			X: 0,
-			Y: 0,
-		}
-	}
-
-	x, _ := strconv.Atoi(tokens[0])
-	y, _ := strconv.Atoi(tokens[1])
-
-	return FlowGraphNodePosition{
-		X: x,
-		Y: y,
-	}
-}
-
 func extractNodeType(event *models.Event) string {
 	if event.IsInput {
 		return NodeTypeInput
@@ -99,4 +64,22 @@ func extractNodeType(event *models.Event) string {
 	}
 
 	return NodeTypeDefault
+}
+
+func (service *GraphService) UpdateEventsPositions(updates []*FlowGraphNodePositionUpdate) error {
+	return service.db.Transaction(func(tx *gorm.DB) error {
+		for _, update := range updates {
+			event := &models.Event{
+				ID:        update.EventId,
+				PositionX: update.NewPosition.X,
+				PositionY: update.NewPosition.Y,
+			}
+
+			if err := service.db.Model(event).Select("PositionX", "PositionY").Updates(event).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
