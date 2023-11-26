@@ -3,14 +3,15 @@ package repositories
 import (
 	"github.com/google/uuid"
 
+	"assalielmehdi/eventify/app"
 	"assalielmehdi/eventify/app/models"
 )
 
 type EventRepository struct {
-	DB *DB
+	DB *app.DB
 }
 
-func NewEventRepository(db *DB) *EventRepository {
+func NewEventRepository(db *app.DB) *EventRepository {
 	return &EventRepository{
 		DB: db,
 	}

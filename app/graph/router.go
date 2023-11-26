@@ -1,6 +1,8 @@
 package graph
 
-import "assalielmehdi/eventify/app/routers"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type GraphRouter struct {
 	basePath string
@@ -14,8 +16,8 @@ func NewGraphRouter(handler *GraphHandler) *GraphRouter {
 	}
 }
 
-func (router *GraphRouter) Register(server *routers.Server) {
-	group := server.Router.Group(router.basePath)
+func (router *GraphRouter) Register(engine *gin.Engine) {
+	group := engine.Group(router.basePath)
 
 	group.GET("/flows/:flowId", router.handler.HandleGetFlowGraph)
 

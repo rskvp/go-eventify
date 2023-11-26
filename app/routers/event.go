@@ -2,6 +2,8 @@ package routers
 
 import (
 	"assalielmehdi/eventify/app/handlers"
+
+	"github.com/gin-gonic/gin"
 )
 
 type EventRouter struct {
@@ -16,8 +18,8 @@ func NewEventRouter(handler *handlers.EventHandler) *EventRouter {
 	}
 }
 
-func (router *EventRouter) Register(server *Server) {
-	group := server.Router.Group(router.BasePath)
+func (router *EventRouter) Register(engine *gin.Engine) {
+	group := engine.Group(router.BasePath)
 
 	// group.GET("/", router.Handler.HandleGetAll)
 

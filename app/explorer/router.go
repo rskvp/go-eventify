@@ -1,6 +1,8 @@
 package explorer
 
-import "assalielmehdi/eventify/app/routers"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type ExplorerRouter struct {
 	basePath string
@@ -14,8 +16,8 @@ func NewExplorerRouter(handler *ExplorerHandler) *ExplorerRouter {
 	}
 }
 
-func (router *ExplorerRouter) Register(server *routers.Server) {
-	group := server.Router.Group(router.basePath)
+func (router *ExplorerRouter) Register(engine *gin.Engine) {
+	group := engine.Group(router.basePath)
 
 	group.GET("/tree", router.handler.HandleGetTree)
 }

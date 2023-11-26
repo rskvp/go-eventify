@@ -26,4 +26,6 @@ COPY --from=ui /ui/build/static/ ./static/
 
 RUN go build .
 
+ENV GIN_MODE=release
+
 ENTRYPOINT ["./eventify"]

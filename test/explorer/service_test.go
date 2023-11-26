@@ -1,17 +1,22 @@
-package explorer_test
+package explorer
 
 import (
-	"assalielmehdi/eventify/app/explorer"
-	"assalielmehdi/eventify/app/models"
-	"assalielmehdi/eventify/app/repositories"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"assalielmehdi/eventify/app"
+	"assalielmehdi/eventify/app/config"
+	"assalielmehdi/eventify/app/explorer"
+	"assalielmehdi/eventify/app/models"
 )
 
-func prepare() (*repositories.DB, *explorer.ExplorerService) {
-	db := repositories.NewDB(repositories.DBTypeInMemory)
+func prepare() (*app.DB, *explorer.ExplorerService) {
+	dbConfig := &config.DBConfig{
+		Type: config.DBTypeInMemory,
+	}
+	db := app.NewDB(dbConfig)
 	service := explorer.NewExplorerService(db)
 
 	return db, service

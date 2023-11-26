@@ -1,18 +1,19 @@
 package graph
 
 import (
-	"assalielmehdi/eventify/app/models"
-	"assalielmehdi/eventify/app/repositories"
 	"fmt"
 
 	"gorm.io/gorm"
+
+	"assalielmehdi/eventify/app"
+	"assalielmehdi/eventify/app/models"
 )
 
 type GraphService struct {
-	db *repositories.DB
+	db *app.DB
 }
 
-func NewGraphService(db *repositories.DB) *GraphService {
+func NewGraphService(db *app.DB) *GraphService {
 	return &GraphService{
 		db: db,
 	}

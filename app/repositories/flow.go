@@ -6,14 +6,15 @@ import (
 
 	"github.com/google/uuid"
 
+	"assalielmehdi/eventify/app"
 	"assalielmehdi/eventify/app/models"
 )
 
 type FlowRepository struct {
-	DB *DB
+	DB *app.DB
 }
 
-func NewFlowRepository(db *DB) *FlowRepository {
+func NewFlowRepository(db *app.DB) *FlowRepository {
 	return &FlowRepository{
 		DB: db,
 	}

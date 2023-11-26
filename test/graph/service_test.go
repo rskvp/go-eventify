@@ -1,18 +1,23 @@
 package graph_test
 
 import (
-	"assalielmehdi/eventify/app/graph"
-	"assalielmehdi/eventify/app/models"
-	"assalielmehdi/eventify/app/repositories"
 	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"assalielmehdi/eventify/app"
+	"assalielmehdi/eventify/app/config"
+	"assalielmehdi/eventify/app/graph"
+	"assalielmehdi/eventify/app/models"
 )
 
-func prepare() (*repositories.DB, graph.GraphService) {
-	db := repositories.NewDB(repositories.DBTypeInMemory)
+func prepare() (*app.DB, graph.GraphService) {
+	dbConfig := &config.DBConfig{
+		Type: config.DBTypeInMemory,
+	}
+	db := app.NewDB(dbConfig)
 	service := graph.NewGraphService(db)
 
 	return db, *service

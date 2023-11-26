@@ -1,15 +1,16 @@
 package explorer
 
 import (
-	"assalielmehdi/eventify/app/repositories"
 	"fmt"
+
+	"assalielmehdi/eventify/app"
 )
 
 type ExplorerService struct {
-	db *repositories.DB
+	db *app.DB
 }
 
-func NewExplorerService(db *repositories.DB) *ExplorerService {
+func NewExplorerService(db *app.DB) *ExplorerService {
 	return &ExplorerService{
 		db: db,
 	}

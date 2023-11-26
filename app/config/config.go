@@ -11,9 +11,6 @@ func Init() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
-	initServerConfig()
-	initDBConfig()
 }
 
 func getEnvOrDefault(key, defaultValue string) string {
