@@ -1,5 +1,7 @@
-tmp/
-
 .vscode/
 
+tmp/
+static/
+templates/
 eventify.db
+eventify
