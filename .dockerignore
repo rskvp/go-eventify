@@ -1,0 +1,12 @@
+.github/
+
+.vscode/
+
+static/
+templates/
+
+test/
+
+tmp/
+
+eventify.db

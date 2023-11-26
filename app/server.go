@@ -1,6 +1,8 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -24,6 +26,8 @@ func NewServer(serverConfig *config.ServerConfig) *Server {
 
 	server.Router.Use(cors.New(server.config.CORS))
 
+	server.handleStatic()
+
 	return server
 }
 
@@ -33,4 +37,12 @@ func (server *Server) Register(router Router) {
 
 func (server *Server) Serve() {
 	server.Router.Run(server.config.Addr)
+}
+
+func (server *Server) handleStatic() {
+	server.Router.Static("/static/", "static/")
+	server.Router.LoadHTMLGlob("templates/*")
+	server.Router.NoRoute(func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", gin.H{})
+	})
 }
