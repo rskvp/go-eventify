@@ -1,5 +1,8 @@
 # Eventify
 
+[![CI-CD](https://github.com/assalielmehdi/go-eventify/actions/workflows/pipeline.yml/badge.svg)](https://github.com/assalielmehdi/go-eventify/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A lightweight low-code platform for running workflows on tiny servers.
 
 ## Getting Started
