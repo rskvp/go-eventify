@@ -42,10 +42,10 @@ func (service *GraphService) GetFlowGraph(flowId string) (*FlowGraph, error) {
 			Type:           extractNodeType(event),
 		})
 
-		if event.PrevEventID != "" {
+		if event.PrevID != "" {
 			graph.Edges = append(graph.Edges, &FlowGraphEdges{
-				Id:        fmt.Sprintf("%s->%s", event.PrevEventID, event.ID),
-				Source:    event.PrevEventID,
+				Id:        fmt.Sprintf("%s->%s", event.PrevID, event.ID),
+				Source:    event.PrevID,
 				Target:    event.ID,
 				MarkerEnd: FlowGraphEdgeMarker{EdgeMarkerEndType},
 			})

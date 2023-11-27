@@ -2,6 +2,7 @@ package explorer
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,19 +13,26 @@ import (
 	"assalielmehdi/eventify/app/models"
 )
 
-func prepare() (*app.DB, *explorer.ExplorerService) {
+func setup() (*app.DB, *explorer.ExplorerService, func()) {
 	dbConfig := &config.DBConfig{
-		Type: config.DBTypeInMemory,
+		Type: config.DBTypeSqlite,
+		Sqlite: &config.DBSqliteConfig{
+			File: "test.db",
+		},
 	}
 	db := app.NewDB(dbConfig)
 	service := explorer.NewExplorerService(db)
 
-	return db, service
+	return db, service, func() {
+		os.Remove(dbConfig.Sqlite.File)
+	}
 }
 
 func TestGetTree(t *testing.T) {
+	db, service, teardown := setup()
+	defer teardown()
+
 	assert := assert.New(t)
-	db, service := prepare()
 
 	flows := []*models.Flow{
 		{

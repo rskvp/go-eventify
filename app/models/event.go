@@ -11,8 +11,8 @@ type Event struct {
 	Name        string    `json:"name" binding:"required"`
 	Description string    `json:"description" binding:"required"`
 	Action      *Action   `json:"-"`
-	Next        *Event    `json:"next" gorm:"foreignKey:PrevEventID"`
-	PrevEventID string    `json:"prevEventId"`
+	NextID      string    `json:"nextId"`
+	PrevID      string    `json:"prevId"`
 	FlowID      string    `json:"flowId" binding:"required"`
 	CreatedAt   time.Time `json:"createdAt"`
 	PositionX   float64

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"assalielmehdi/eventify/app"
+	"assalielmehdi/eventify/app/models"
 )
 
 type ExplorerService struct {
@@ -17,54 +18,32 @@ func NewExplorerService(db *app.DB) *ExplorerService {
 }
 
 func (service *ExplorerService) GetTree() (ExplorerTree, error) {
-	query := `
-		SELECT flows.id as flowId, flows.name as flowName, events.id as eventId, events.name as eventName
-		FROM flows
-		LEFT JOIN events
-		ON events.flow_id = flows.id;
-	`
-
-	rows, err := service.db.Raw(query).Rows()
+	var flows []*models.Flow
+	err := service.db.Preload("Events").Find(&flows).Error
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
 	tree := make(ExplorerTree, 0)
-	var curFlow *ExplorerTreeNode
 
-	for rows.Next() {
-		var flowId, flowName, eventId, eventName string
-
-		rows.Scan(&flowId, &flowName, &eventId, &eventName)
-
-		if curFlow == nil || curFlow.Key != fmt.Sprintf("/flows/%s", flowId) {
-			if curFlow != nil {
-				tree = append(tree, curFlow)
-			}
-
-			curFlow = &ExplorerTreeNode{
-				Key:      fmt.Sprintf("/flows/%s", flowId),
-				Title:    flowName,
-				Children: make([]*ExplorerTreeNode, 0),
-				IsLeaf:   false,
-			}
+	for _, flow := range flows {
+		flowNode := &ExplorerTreeNode{
+			Key:      fmt.Sprintf("/flows/%s", flow.ID),
+			Title:    flow.Name,
+			Children: make([]*ExplorerTreeNode, 0),
+			IsLeaf:   false,
 		}
 
-		if eventId != "" {
-			event := &ExplorerTreeNode{
-				Key:      fmt.Sprintf("%s/events/%s", curFlow.Key, eventId),
-				Title:    eventName,
+		for _, event := range flow.Events {
+			flowNode.Children = append(flowNode.Children, &ExplorerTreeNode{
+				Key:      fmt.Sprintf("/flows/%s/events/%s", flow.ID, event.ID),
+				Title:    event.Name,
 				Children: make([]*ExplorerTreeNode, 0),
 				IsLeaf:   true,
-			}
-
-			curFlow.Children = append(curFlow.Children, event)
+			})
 		}
-	}
 
-	if curFlow != nil {
-		tree = append(tree, curFlow)
+		tree = append(tree, flowNode)
 	}
 
 	return tree, nil

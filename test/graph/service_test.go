@@ -2,6 +2,7 @@ package graph_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/google/uuid"
@@ -13,19 +14,26 @@ import (
 	"assalielmehdi/eventify/app/models"
 )
 
-func prepare() (*app.DB, graph.GraphService) {
+func setup() (*app.DB, graph.GraphService, func()) {
 	dbConfig := &config.DBConfig{
-		Type: config.DBTypeInMemory,
+		Type: config.DBTypeSqlite,
+		Sqlite: &config.DBSqliteConfig{
+			File: "test.db",
+		},
 	}
 	db := app.NewDB(dbConfig)
 	service := graph.NewGraphService(db)
 
-	return db, *service
+	return db, *service, func() {
+		os.Remove(dbConfig.Sqlite.File)
+	}
 }
 
 func TestGetFlowGraph(t *testing.T) {
+	db, service, teardown := setup()
+	defer teardown()
+
 	assert := assert.New(t)
-	db, service := prepare()
 
 	flowId := "1"
 	eventIds := []string{uuid.NewString(), uuid.NewString(), uuid.NewString()}
@@ -40,24 +48,24 @@ func TestGetFlowGraph(t *testing.T) {
 			FlowID:    flowId,
 		},
 		{
-			ID:          eventIds[1],
-			Name:        "event-2",
-			IsInput:     false,
-			IsOutput:    false,
-			PositionX:   50,
-			PositionY:   50,
-			PrevEventID: eventIds[0],
-			FlowID:      flowId,
+			ID:        eventIds[1],
+			Name:      "event-2",
+			IsInput:   false,
+			IsOutput:  false,
+			PositionX: 50,
+			PositionY: 50,
+			PrevID:    eventIds[0],
+			FlowID:    flowId,
 		},
 		{
-			ID:          eventIds[2],
-			Name:        "event-3",
-			IsInput:     false,
-			IsOutput:    true,
-			PositionX:   100,
-			PositionY:   100,
-			PrevEventID: eventIds[1],
-			FlowID:      flowId,
+			ID:        eventIds[2],
+			Name:      "event-3",
+			IsInput:   false,
+			IsOutput:  true,
+			PositionX: 100,
+			PositionY: 100,
+			PrevID:    eventIds[1],
+			FlowID:    flowId,
 		},
 	}
 
@@ -102,8 +110,10 @@ func TestGetFlowGraph(t *testing.T) {
 }
 
 func TestUpdateEventPosition(t *testing.T) {
+	db, service, teardown := setup()
+	defer teardown()
+
 	assert := assert.New(t)
-	db, service := prepare()
 
 	event := models.Event{
 		ID:        uuid.NewString(),
