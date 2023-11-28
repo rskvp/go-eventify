@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"assalielmehdi/eventify/app/handlers"
+	"assalielmehdi/eventify/app"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,24 +21,26 @@ func (handler *GraphHandler) HandleGetFlowGraph(ctx *gin.Context) {
 	flowId := ctx.Param("flowId")
 	graph, err := handler.graphService.GetFlowGraph(flowId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, handlers.NewHandlerError(err))
+		ctx.JSON(http.StatusInternalServerError, app.NewServerResponseError(err))
+		return
 	}
 
-	ctx.JSON(http.StatusOK, handlers.NewHandlerSuccess(graph))
+	ctx.JSON(http.StatusOK, app.NewServerResponseSuccess(graph))
 }
 
 func (handler *GraphHandler) HandleUpdateEventPosition(ctx *gin.Context) {
 	var payload []*FlowGraphNodePositionUpdate
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, handlers.NewHandlerError(err))
+		ctx.JSON(http.StatusBadRequest, app.NewServerResponseError(err))
 		return
 	}
 
 	err := handler.graphService.UpdateEventsPositions(payload)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, handlers.NewHandlerError(err))
+		ctx.JSON(http.StatusInternalServerError, app.NewServerResponseError(err))
+		return
 	}
 
-	ctx.JSON(http.StatusOK, handlers.NewHandlerSuccess("Batch update with success."))
+	ctx.JSON(http.StatusOK, app.NewServerResponseSuccess("Batch update with success."))
 }

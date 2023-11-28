@@ -11,7 +11,7 @@ type GraphRouter struct {
 
 func NewGraphRouter(handler *GraphHandler) *GraphRouter {
 	return &GraphRouter{
-		basePath: "/api/graph",
+		basePath: "/api/graph/",
 		handler:  handler,
 	}
 }
@@ -19,7 +19,7 @@ func NewGraphRouter(handler *GraphHandler) *GraphRouter {
 func (router *GraphRouter) Register(engine *gin.Engine) {
 	group := engine.Group(router.basePath)
 
-	group.GET("/flows/:flowId", router.handler.HandleGetFlowGraph)
+	group.GET("flows/:flowId/", router.handler.HandleGetFlowGraph)
 
-	group.PATCH("/events/position", router.handler.HandleUpdateEventPosition)
+	group.PATCH("events/position/", router.handler.HandleUpdateEventPosition)
 }

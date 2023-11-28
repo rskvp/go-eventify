@@ -5,15 +5,15 @@ import (
 )
 
 const (
-	FlowTypeDefault = 1
-	FlowTypeCron    = 2
+	FlowTypeDefault = "API"
+	FlowTypeCron    = "CRON"
 )
 
 type Flow struct {
 	ID          string    `json:"id" `
 	Name        string    `json:"name" binding:"required"`
-	Description string    `json:"description" binding:"required"`
-	Type        int       `json:"type" binding:"required"`
+	Description string    `json:"description"`
+	Type        string    `json:"type" binding:"required"`
 	Cron        string    `json:"cron"`
 	Events      []*Event  `json:"events"`
 	CreatedAt   time.Time `json:"createdAt"`

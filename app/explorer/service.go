@@ -5,6 +5,8 @@ import (
 
 	"assalielmehdi/eventify/app"
 	"assalielmehdi/eventify/app/models"
+
+	"github.com/google/uuid"
 )
 
 type ExplorerService struct {
@@ -29,17 +31,16 @@ func (service *ExplorerService) GetTree() (ExplorerTree, error) {
 	for _, flow := range flows {
 		flowNode := &ExplorerTreeNode{
 			Key:      fmt.Sprintf("/flows/%s", flow.ID),
-			Title:    flow.Name,
+			Label:    flow.Name,
 			Children: make([]*ExplorerTreeNode, 0),
-			IsLeaf:   false,
+			Type:     flow.Type,
 		}
 
 		for _, event := range flow.Events {
 			flowNode.Children = append(flowNode.Children, &ExplorerTreeNode{
 				Key:      fmt.Sprintf("/flows/%s/events/%s", flow.ID, event.ID),
-				Title:    event.Name,
+				Label:    event.Name,
 				Children: make([]*ExplorerTreeNode, 0),
-				IsLeaf:   true,
 			})
 		}
 
@@ -47,4 +48,34 @@ func (service *ExplorerService) GetTree() (ExplorerTree, error) {
 	}
 
 	return tree, nil
+}
+
+func (service *ExplorerService) AddFlow(payload *AddFlowRequest) (*models.Flow, error) {
+	record := &models.Flow{
+		ID:   uuid.NewString(),
+		Name: payload.Name,
+		Type: models.FlowTypeDefault,
+	}
+
+	err := service.db.Create(record).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return record, nil
+}
+
+func (service *ExplorerService) AddEvent(payload *AddEventRequest) (*models.Event, error) {
+	record := &models.Event{
+		ID:     uuid.NewString(),
+		Name:   payload.Name,
+		FlowID: payload.FlowId,
+	}
+
+	err := service.db.Create(record).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return record, nil
 }

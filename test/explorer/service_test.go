@@ -13,7 +13,7 @@ import (
 	"assalielmehdi/eventify/app/models"
 )
 
-func setup() (*app.DB, *explorer.ExplorerService, func()) {
+func setup(t *testing.T) (*assert.Assertions, *app.DB, *explorer.ExplorerService, func()) {
 	dbConfig := &config.DBConfig{
 		Type: config.DBTypeSqlite,
 		Sqlite: &config.DBSqliteConfig{
@@ -23,16 +23,14 @@ func setup() (*app.DB, *explorer.ExplorerService, func()) {
 	db := app.NewDB(dbConfig)
 	service := explorer.NewExplorerService(db)
 
-	return db, service, func() {
+	return assert.New(t), db, service, func() {
 		os.Remove(dbConfig.Sqlite.File)
 	}
 }
 
 func TestGetTree(t *testing.T) {
-	db, service, teardown := setup()
+	assert, db, service, teardown := setup(t)
 	defer teardown()
-
-	assert := assert.New(t)
 
 	flows := []*models.Flow{
 		{
@@ -65,23 +63,54 @@ func TestGetTree(t *testing.T) {
 	assert.Len(tree, 2)
 
 	assert.Equal(tree[0].Key, fmt.Sprintf("/flows/%s", flows[0].ID))
-	assert.Equal(tree[0].Title, flows[0].Name)
-	assert.False(tree[0].IsLeaf)
+	assert.Equal(tree[0].Label, flows[0].Name)
 	assert.Len(tree[0].Children, 2)
 
 	assert.Equal(tree[0].Children[0].Key, fmt.Sprintf("/flows/%s/events/%s", flows[0].ID, events[0].ID))
-	assert.Equal(tree[0].Children[0].Title, events[0].Name)
-	assert.True(tree[0].Children[0].IsLeaf)
+	assert.Equal(tree[0].Children[0].Label, events[0].Name)
 	assert.Len(tree[0].Children[0].Children, 0)
 
 	assert.Equal(tree[0].Children[1].Key, fmt.Sprintf("/flows/%s/events/%s", flows[0].ID, events[1].ID))
-	assert.Equal(tree[0].Children[1].Title, events[1].Name)
-	assert.True(tree[0].Children[1].IsLeaf)
+	assert.Equal(tree[0].Children[1].Label, events[1].Name)
 	assert.Len(tree[0].Children[1].Children, 0)
 
 	assert.Equal(tree[1].Key, fmt.Sprintf("/flows/%s", flows[1].ID))
-	assert.Equal(tree[1].Title, flows[1].Name)
-	assert.False(tree[1].IsLeaf)
+	assert.Equal(tree[1].Label, flows[1].Name)
 	assert.Len(tree[1].Children, 0)
+}
 
+func TestAddFlow(t *testing.T) {
+	assert, db, service, teardown := setup(t)
+	defer teardown()
+
+	payload := &explorer.AddFlowRequest{
+		Name: "flow",
+	}
+
+	service.AddFlow(payload)
+
+	var record models.Flow
+	db.Where("name = ?", payload.Name).Find(&record)
+
+	assert.NotEmpty(record.ID)
+	assert.Equal(record.Name, payload.Name)
+}
+
+func TestAddEvent(t *testing.T) {
+	assert, db, service, teardown := setup(t)
+	defer teardown()
+
+	payload := &explorer.AddEventRequest{
+		Name:   "event",
+		FlowId: "flow",
+	}
+
+	service.AddEvent(payload)
+
+	var record models.Event
+	db.Where("name = ?", payload.Name).Find(&record)
+
+	assert.NotEmpty(record.ID)
+	assert.Equal(record.Name, payload.Name)
+	assert.Equal(record.FlowID, payload.FlowId)
 }

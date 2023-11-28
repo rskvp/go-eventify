@@ -7,15 +7,25 @@ import (
 	"github.com/gin-contrib/cors"
 )
 
+const (
+	ServerModeDev  = 1
+	ServerModeProd = 2
+)
+
 type ServerConfig struct {
 	Addr string
 	CORS cors.Config
+	Mode int
 }
 
 func GetEnvServerConfig() *ServerConfig {
-	host, port := "localhost", getEnvOrDefault("SERVER_PORT", "8080")
-
+	mode := ServerModeDev
 	if os.Getenv("GIN_MODE") == "release" {
+		mode = ServerModeProd
+	}
+
+	host, port := "localhost", getEnvOrDefault("SERVER_PORT", "8080")
+	if mode == ServerModeProd {
 		host = ""
 	}
 
@@ -26,5 +36,6 @@ func GetEnvServerConfig() *ServerConfig {
 			AllowHeaders: []string{"*"},
 			AllowMethods: []string{"*"},
 		},
+		Mode: mode,
 	}
 }
