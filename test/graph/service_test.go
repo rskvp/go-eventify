@@ -69,6 +69,7 @@ func TestGetFlowGraph(t *testing.T) {
 		},
 	}
 
+	db.Create(&models.Flow{ID: flowId})
 	db.Create(&events)
 
 	flowGraph, _ := service.GetFlowGraph(flowId)
@@ -115,8 +116,11 @@ func TestUpdateEventPosition(t *testing.T) {
 
 	assert := assert.New(t)
 
+	db.Create(&models.Flow{ID: "flow_id"})
+
 	event := models.Event{
 		ID:        uuid.NewString(),
+		FlowID:    "flow_id",
 		PositionX: 0,
 		PositionY: 0,
 	}

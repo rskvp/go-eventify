@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/glebarez/sqlite"
@@ -40,7 +41,7 @@ func NewDB(dbConfig *config.DBConfig) *DB {
 }
 
 func (db *DB) openInMemoryDB() {
-	gormDB, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	gormDB, err := gorm.Open(sqlite.Open("file::memory:?_pragma=foreign_keys(1)"), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,7 +50,7 @@ func (db *DB) openInMemoryDB() {
 }
 
 func (db *DB) openSqliteDB() {
-	gormDB, err := gorm.Open(sqlite.Open(db.config.Sqlite.File), &gorm.Config{})
+	gormDB, err := gorm.Open(sqlite.Open(fmt.Sprintf("%s?_pragma=foreign_keys(1)", db.config.Sqlite.File)), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +62,6 @@ func (db *DB) migrate() {
 	db.AutoMigrate(
 		&models.Flow{},
 		&models.Event{},
-		&models.Action{},
 		&models.Execution{},
 	)
 }

@@ -2,15 +2,12 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Event struct {
 	ID          string    `json:"id"`
-	Name        string    `json:"name" binding:"required"`
+	Name        string    `json:"name" binding:"required" gorm:"unique"`
 	Description string    `json:"description"`
-	Action      *Action   `json:"-"`
 	NextID      string    `json:"nextId"`
 	PrevID      string    `json:"prevId"`
 	FlowID      string    `json:"flowId" binding:"required"`
@@ -21,9 +18,11 @@ type Event struct {
 	IsOutput    bool
 }
 
-func NewEvent() *Event {
-	return &Event{
-		ID:     uuid.NewString(),
-		Action: NewAction(),
-	}
+type EventExecution struct {
+	ID         string
+	EventID    string
+	Input      string
+	Output     string
+	StartedAt  time.Time
+	FinishedAt time.Time
 }

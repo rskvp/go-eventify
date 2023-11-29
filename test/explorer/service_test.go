@@ -100,9 +100,11 @@ func TestAddEvent(t *testing.T) {
 	assert, db, service, teardown := setup(t)
 	defer teardown()
 
+	db.Create(&models.Flow{ID: "flow_id"})
+
 	payload := &explorer.AddEventRequest{
 		Name:   "event",
-		FlowId: "flow",
+		FlowId: "flow_id",
 	}
 
 	service.AddEvent(payload)

@@ -90,9 +90,12 @@ func TestGetEventById(t *testing.T) {
 	assert, db, service, teardown := setup(t)
 	defer teardown()
 
+	flowId := uuid.NewString()
+	db.Create(&models.Flow{ID: flowId})
 	record := &models.Event{
-		ID:   uuid.NewString(),
-		Name: "event",
+		ID:     uuid.NewString(),
+		Name:   "event",
+		FlowID: flowId,
 	}
 
 	db.Create(record)
@@ -107,9 +110,12 @@ func TestUpdateEventById(t *testing.T) {
 	assert, db, service, teardown := setup(t)
 	defer teardown()
 
+	flowId := uuid.NewString()
+	db.Create(&models.Flow{ID: flowId})
 	record := &models.Event{
-		ID:   uuid.NewString(),
-		Name: "event",
+		ID:     uuid.NewString(),
+		Name:   "event",
+		FlowID: flowId,
 	}
 
 	db.Create(record)
@@ -129,9 +135,12 @@ func TestDeleteEventById(t *testing.T) {
 	assert, db, service, teardown := setup(t)
 	defer teardown()
 
+	flowId := uuid.NewString()
+	db.Create(&models.Flow{ID: flowId})
 	record := &models.Event{
-		ID:   uuid.NewString(),
-		Name: "event",
+		ID:     uuid.NewString(),
+		Name:   "event",
+		FlowID: flowId,
 	}
 
 	db.Create(record)
